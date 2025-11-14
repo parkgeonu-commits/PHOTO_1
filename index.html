@@ -311,104 +311,110 @@
             background-color: #e0e0e0;
         }
 
-        /* 전체화면 이미지 뷰 */
-        .fullscreen-image {
+        /* 결과 화면 */
+        .result-screen {
             display: none;
             width: 100vw;
             height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #000;
-            z-index: 2000;
+            background-color: #fff;
             flex-direction: column;
         }
 
-        .fullscreen-image.active {
+        .result-screen.active {
             display: flex;
         }
 
-        .fullscreen-header {
-            padding: 12px 20px;
-            padding-top: max(env(safe-area-inset-top), 12px);
-            background-color: rgba(0, 0, 0, 0.95);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-        }
-
-        .fullscreen-header p {
-            color: #fff;
-            font-size: 13px;
-            flex: 1;
+        .result-header {
             text-align: center;
-            line-height: 1.4;
-        }
-
-        .close-btn {
-            padding: 8px 16px;
+            padding: 20px;
+            padding-top: max(env(safe-area-inset-top), 20px);
             background-color: #fff;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .fullscreen-image-wrapper {
+        .result-header h2 {
+            font-size: 26px;
+            color: #000;
+        }
+
+        .result-image-wrapper {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background-color: #000;
+            background-color: #f8f8f8;
             overflow: auto;
         }
 
-        .fullscreen-image-wrapper img {
+        .result-image-wrapper img {
             display: block;
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
+            max-width: 90%;
             height: auto;
-            -webkit-touch-callout: default;
-            -webkit-user-select: auto;
-            user-select: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* 하단 버튼 영역 */
-        .fullscreen-actions {
-            padding: 15px 20px;
-            padding-bottom: max(env(safe-area-inset-bottom), 15px);
-            background-color: rgba(0, 0, 0, 0.95);
-            border-top: 1px solid #333;
+        .result-actions {
+            padding: 20px;
+            padding-bottom: max(env(safe-area-inset-bottom), 20px);
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
         }
 
-        .fullscreen-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .fullscreen-btn {
-            flex: 1;
-            padding: 14px;
-            border: 2px solid #fff;
+        .result-info {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
             border-radius: 12px;
-            font-size: 15px;
+        }
+
+        .result-info p {
+            font-size: 14px;
+            color: #856404;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .result-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .result-btn {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #000;
+            border-radius: 14px;
+            font-size: 17px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        .btn-new-photo {
+        .btn-download {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .btn-download:active {
+            transform: scale(0.97);
+        }
+
+        .btn-new {
             background-color: #fff;
             color: #000;
         }
 
-        .btn-new-photo:active {
+        .btn-new:active {
             transform: scale(0.97);
         }
     </style>
@@ -461,21 +467,26 @@
             </div>
         </div>
 
-        <!-- 전체화면 이미지 -->
-        <div class="fullscreen-image" id="fullscreenImage">
-            <div class="fullscreen-header">
-                <div style="width: 60px;"></div>
-                <p>👇 이미지를 <strong>길게 누르면</strong><br>사진첩에 저장할 수 있어요</p>
-                <button class="close-btn" onclick="closeFullscreen()">닫기</button>
-            </div>
-            
-            <div class="fullscreen-image-wrapper">
-                <img id="fullscreenImg" alt="빈티지 포토" crossorigin="anonymous">
+        <!-- 결과 화면 -->
+        <div class="result-screen" id="resultScreen">
+            <div class="result-header">
+                <h2>완성된 사진</h2>
             </div>
 
-            <div class="fullscreen-actions">
-                <div class="fullscreen-buttons">
-                    <button class="fullscreen-btn btn-new-photo" onclick="resetAll()">
+            <div class="result-image-wrapper">
+                <img id="resultImage" alt="빈티지 포토">
+            </div>
+
+            <div class="result-actions">
+                <div class="result-info">
+                    <p>📥 "사진 저장" 버튼을 누르면<br>다운로드 폴더에 저장됩니다</p>
+                </div>
+
+                <div class="result-buttons">
+                    <button class="result-btn btn-download" onclick="downloadImage()">
+                        💾 사진 저장
+                    </button>
+                    <button class="result-btn btn-new" onclick="resetAll()">
                         ↻ 새로 찍기
                     </button>
                 </div>
@@ -484,6 +495,7 @@
     </div>
 
     <canvas id="captureCanvas" style="display: none;"></canvas>
+    <a id="downloadLink" style="display: none;"></a>
 
     <script>
         let stream = null;
@@ -748,49 +760,54 @@
                     loadedCount++;
                     
                     if (loadedCount === 4) {
-                        canvas.toBlob((blob) => {
-                            finalImageDataUrl = URL.createObjectURL(blob);
-                            
-                            const fullscreenImg = document.getElementById('fullscreenImg');
-                            fullscreenImg.src = finalImageDataUrl;
-                            
-                            // 바로 전체화면 표시
-                            document.getElementById('mainScreen').classList.remove('active');
-                            document.getElementById('fullscreenImage').classList.add('active');
-                        }, 'image/jpeg', 0.95);
+                        finalImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                        
+                        // 이미지 표시
+                        document.getElementById('resultImage').src = finalImageDataUrl;
+                        
+                        // 결과 화면 표시
+                        document.getElementById('mainScreen').classList.remove('active');
+                        document.getElementById('resultScreen').classList.add('active');
                     }
                 };
             });
         }
 
-        function closeFullscreen() {
-            document.getElementById('fullscreenImage').classList.remove('active');
-            document.getElementById('mainScreen').classList.add('active');
-            document.getElementById('captureBtn').disabled = false;
-            document.getElementById('cameraSwitch').style.display = 'flex';
+        function downloadImage() {
+            if (!finalImageDataUrl) return;
+            
+            // 다운로드 링크 생성
+            const link = document.getElementById('downloadLink');
+            const now = new Date();
+            const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.jpg`;
+            
+            link.href = finalImageDataUrl;
+            link.download = filename;
+            link.click();
+            
+            // 안내 메시지 업데이트
+            const infoText = document.querySelector('.result-info p');
+            infoText.innerHTML = '✅ 다운로드 완료!<br>Safari 다운로드 폴더를 확인하세요';
         }
 
         function resetAll() {
             photos = [];
             isCapturing = false;
+            finalImageDataUrl = null;
             
-            if (finalImageDataUrl) {
-                URL.revokeObjectURL(finalImageDataUrl);
-                finalImageDataUrl = null;
-            }
-            
-            document.getElementById('fullscreenImage').classList.remove('active');
+            document.getElementById('resultScreen').classList.remove('active');
             document.getElementById('mainScreen').classList.add('active');
             document.getElementById('captureBtn').disabled = false;
             document.getElementById('cameraSwitch').style.display = 'flex';
+            
+            // 안내 메시지 초기화
+            const infoText = document.querySelector('.result-info p');
+            infoText.innerHTML = '📥 "사진 저장" 버튼을 누르면<br>다운로드 폴더에 저장됩니다';
         }
 
         window.addEventListener('beforeunload', () => {
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
-            }
-            if (finalImageDataUrl) {
-                URL.revokeObjectURL(finalImageDataUrl);
             }
         });
     </script>
