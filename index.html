@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Vintage Photo Booth</title>
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
     <style>
         * {
             margin: 0;
@@ -356,6 +357,9 @@
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            -webkit-touch-callout: default;
+            -webkit-user-select: auto;
+            user-select: auto;
         }
 
         .result-actions {
@@ -369,14 +373,14 @@
             text-align: center;
             margin-bottom: 15px;
             padding: 12px;
-            background-color: #fff3cd;
-            border: 2px solid #ffc107;
+            background-color: #e3f2fd;
+            border: 2px solid #2196f3;
             border-radius: 12px;
         }
 
         .result-info p {
             font-size: 14px;
-            color: #856404;
+            color: #1565c0;
             font-weight: 600;
             line-height: 1.5;
         }
@@ -398,6 +402,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            position: relative;
         }
 
         .btn-download {
@@ -405,8 +410,13 @@
             color: #fff;
         }
 
-        .btn-download:active {
+        .btn-download:active:not(:disabled) {
             transform: scale(0.97);
+        }
+
+        .btn-download:disabled {
+            background-color: #666;
+            opacity: 0.7;
         }
 
         .btn-new {
@@ -416,6 +426,20 @@
 
         .btn-new:active {
             transform: scale(0.97);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -479,12 +503,12 @@
 
             <div class="result-actions">
                 <div class="result-info">
-                    <p>📥 "사진 저장" 버튼을 누르면<br>다운로드 폴더에 저장됩니다</p>
+                    <p>👆 이미지를 <strong>길게 누르면</strong><br>사진첩에 저장할 수 있어요</p>
                 </div>
 
                 <div class="result-buttons">
-                    <button class="result-btn btn-download" onclick="downloadImage()">
-                        💾 사진 저장
+                    <button class="result-btn btn-download" id="gifBtn" onclick="createAndDownloadGIF()">
+                        <span id="gifBtnText">🎬 GIF 이미지 저장</span>
                     </button>
                     <button class="result-btn btn-new" onclick="resetAll()">
                         ↻ 새로 찍기
@@ -504,6 +528,7 @@
         let isCapturing = false;
         let currentFacingMode = 'user';
         let finalImageDataUrl = null;
+        let isCreatingGIF = false;
 
         async function requestCameraPermission() {
             try {
@@ -773,36 +798,93 @@
             });
         }
 
-        function downloadImage() {
-            if (!finalImageDataUrl) return;
+        async function createAndDownloadGIF() {
+            if (isCreatingGIF) return;
             
-            // 다운로드 링크 생성
-            const link = document.getElementById('downloadLink');
-            const now = new Date();
-            const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.jpg`;
-            
-            link.href = finalImageDataUrl;
-            link.download = filename;
-            link.click();
-            
-            // 안내 메시지 업데이트
-            const infoText = document.querySelector('.result-info p');
-            infoText.innerHTML = '✅ 다운로드 완료!<br>Safari 다운로드 폴더를 확인하세요';
+            isCreatingGIF = true;
+            const btn = document.getElementById('gifBtn');
+            const btnText = document.getElementById('gifBtnText');
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="loading-spinner"></span> GIF 생성 중...';
+
+            try {
+                // GIF 생성
+                const gif = new GIF({
+                    workers: 2,
+                    quality: 10,
+                    width: 400,
+                    height: 533,
+                    workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
+                });
+
+                // 각 사진을 GIF 프레임으로 추가
+                for (let i = 0; i < 4; i++) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 400;
+                    canvas.height = 533;
+                    const ctx = canvas.getContext('2d');
+
+                    const img = new Image();
+                    img.src = photos[i];
+                    
+                    await new Promise((resolve) => {
+                        img.onload = () => {
+                            ctx.drawImage(img, 0, 0, 400, 533);
+                            gif.addFrame(canvas, {delay: 800}); // 0.8초 간격
+                            resolve();
+                        };
+                    });
+                }
+
+                gif.on('finished', function(blob) {
+                    // GIF 다운로드
+                    const url = URL.createObjectURL(blob);
+                    const link = document.getElementById('downloadLink');
+                    const now = new Date();
+                    const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.gif`;
+                    
+                    link.href = url;
+                    link.download = filename;
+                    link.click();
+                    
+                    URL.revokeObjectURL(url);
+                    
+                    btnText.textContent = '✅ GIF 다운로드 완료!';
+                    setTimeout(() => {
+                        btnText.textContent = '🎬 GIF 이미지 저장';
+                        btn.disabled = false;
+                        isCreatingGIF = false;
+                    }, 2000);
+                });
+
+                gif.render();
+
+            } catch (err) {
+                console.error('GIF 생성 오류:', err);
+                btnText.textContent = '❌ 오류 발생';
+                setTimeout(() => {
+                    btnText.textContent = '🎬 GIF 이미지 저장';
+                    btn.disabled = false;
+                    isCreatingGIF = false;
+                }, 2000);
+            }
         }
 
         function resetAll() {
             photos = [];
             isCapturing = false;
             finalImageDataUrl = null;
+            isCreatingGIF = false;
+            
+            const btn = document.getElementById('gifBtn');
+            const btnText = document.getElementById('gifBtnText');
+            btn.disabled = false;
+            btnText.textContent = '🎬 GIF 이미지 저장';
             
             document.getElementById('resultScreen').classList.remove('active');
             document.getElementById('mainScreen').classList.add('active');
             document.getElementById('captureBtn').disabled = false;
             document.getElementById('cameraSwitch').style.display = 'flex';
-            
-            // 안내 메시지 초기화
-            const infoText = document.querySelector('.result-info p');
-            infoText.innerHTML = '📥 "사진 저장" 버튼을 누르면<br>다운로드 폴더에 저장됩니다';
         }
 
         window.addEventListener('beforeunload', () => {
