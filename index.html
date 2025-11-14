@@ -30,7 +30,6 @@
             flex-direction: column;
         }
 
-        /* 헤더 */
         .header {
             text-align: center;
             padding: 15px 20px;
@@ -50,7 +49,6 @@
             font-size: 12px;
         }
 
-        /* 에러 & 안내 박스 */
         .modal-box {
             position: fixed;
             top: 50%;
@@ -95,7 +93,6 @@
             margin-top: 8px;
         }
 
-        /* 권한 요청 화면 */
         .permission-screen {
             position: fixed;
             top: 0;
@@ -143,7 +140,6 @@
             font-weight: 700;
         }
 
-        /* 메인 화면 */
         .main-screen {
             flex: 1;
             display: none;
@@ -272,7 +268,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 촬영 버튼 */
         .capture-button-area {
             padding: 20px;
         }
@@ -313,8 +308,8 @@
             background-color: #e0e0e0;
         }
 
-        /* 결과물 화면 */
-        .result-screen {
+        /* 결과물 미리보기 화면 */
+        .result-preview {
             display: none;
             width: 100vw;
             height: 100vh;
@@ -323,71 +318,53 @@
             left: 0;
             background-color: #fff;
             flex-direction: column;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
-        .result-screen.active {
+        .result-preview.active {
             display: flex;
         }
 
-        .result-header {
+        .preview-header {
             text-align: center;
             padding: 20px;
             padding-top: max(env(safe-area-inset-top), 20px);
         }
 
-        .result-header h2 {
+        .preview-header h2 {
             font-size: 26px;
             color: #000;
         }
 
-        .result-canvas-container {
+        .preview-image-container {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
             background-color: #f8f8f8;
+            overflow: auto;
         }
 
-        .result-canvas-container canvas {
-            display: block;
+        .preview-image-container img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        .result-actions {
+        .preview-actions {
             padding: 20px;
             padding-bottom: max(env(safe-area-inset-bottom), 20px);
             background-color: #fff;
         }
 
-        .save-instruction {
-            text-align: center;
-            margin-bottom: 18px;
-            padding: 14px;
-            background-color: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 12px;
-        }
-
-        .save-instruction p {
-            font-size: 14px;
-            color: #856404;
-            font-weight: 600;
-            line-height: 1.5;
-        }
-
-        .result-buttons {
+        .preview-buttons {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .result-btn {
+        .preview-btn {
             width: 100%;
             padding: 16px;
             border: 2px solid #000;
@@ -400,44 +377,89 @@
             gap: 8px;
         }
 
-        .btn-save {
+        .btn-open {
             background-color: #000;
             color: #fff;
         }
 
-        .btn-save:active {
+        .btn-open:active {
             transform: scale(0.97);
         }
 
-        .btn-new {
+        .btn-back {
             background-color: #fff;
             color: #000;
         }
 
-        .btn-new:active {
+        .btn-back:active {
             transform: scale(0.97);
         }
 
-        /* 저장 방법 모달 */
-        .save-guide {
-            background-color: #e8f5e9;
-            border: 2px solid #4caf50;
+        /* 전체화면 이미지 */
+        .fullscreen-image {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #000;
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
         }
 
-        .save-guide h3 {
-            color: #2e7d32;
+        .fullscreen-image.active {
+            display: flex;
         }
 
-        .save-guide .steps {
-            text-align: left;
-            margin: 16px 0;
-            padding: 0 8px;
+        .fullscreen-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
-        .save-guide .steps p {
-            margin-bottom: 8px;
+        .fullscreen-header {
+            padding: 15px 20px;
+            padding-top: max(env(safe-area-inset-top), 15px);
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fullscreen-header p {
+            color: #fff;
             font-size: 14px;
-            color: #2e7d32;
+            flex: 1;
+            text-align: center;
+        }
+
+        .close-btn {
+            padding: 8px 16px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .fullscreen-image-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .fullscreen-image-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
         }
     </style>
 </head>
@@ -448,25 +470,12 @@
             <p>레트로 포토 스트립</p>
         </div>
 
-        <!-- 에러 박스 -->
         <div class="modal-box" id="errorBox">
             <h3>⚠️ 카메라 오류</h3>
             <p id="errorMessage"></p>
             <button onclick="retryCamera()">다시 시도</button>
         </div>
 
-        <!-- 저장 안내 모달 -->
-        <div class="modal-box save-guide" id="saveGuide">
-            <h3>📥 사진 저장 방법</h3>
-            <div class="steps">
-                <p><strong>1️⃣ 아래 이미지를 길게 누르기</strong></p>
-                <p><strong>2️⃣ "이미지 저장" 선택</strong></p>
-                <p><strong>3️⃣ 사진 앱에서 확인!</strong></p>
-            </div>
-            <button onclick="closeGuide()">확인</button>
-        </div>
-
-        <!-- 권한 요청 -->
         <div class="permission-screen active" id="permissionScreen">
             <div class="permission-content">
                 <h2>🎬</h2>
@@ -478,7 +487,6 @@
             </div>
         </div>
 
-        <!-- 메인 화면 -->
         <div class="main-screen" id="mainScreen">
             <div class="camera-area">
                 <div class="camera-switch" id="cameraSwitch">
@@ -503,28 +511,38 @@
             </div>
         </div>
 
-        <!-- 결과물 화면 -->
-        <div class="result-screen" id="resultScreen">
-            <div class="result-header">
+        <!-- 결과물 미리보기 -->
+        <div class="result-preview" id="resultPreview">
+            <div class="preview-header">
                 <h2>완성된 사진</h2>
             </div>
 
-            <div class="result-canvas-container">
-                <canvas id="resultCanvas"></canvas>
+            <div class="preview-image-container">
+                <img id="previewImage" alt="완성된 사진">
             </div>
 
-            <div class="result-actions">
-                <div class="save-instruction">
-                    <p>👇 아래 이미지를 <strong>길게 누르면</strong> 사진첩에 저장할 수 있어요</p>
-                </div>
-
-                <div class="result-buttons">
-                    <button class="result-btn btn-save" onclick="showSaveGuide()">
-                        💾 저장 방법 보기
+            <div class="preview-actions">
+                <div class="preview-buttons">
+                    <button class="preview-btn btn-open" onclick="openFullscreen()">
+                        💾 저장하기 (이미지 보기)
                     </button>
-                    <button class="result-btn btn-new" onclick="resetAll()">
+                    <button class="preview-btn btn-back" onclick="resetAll()">
                         ↻ 새로 찍기
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전체화면 이미지 -->
+        <div class="fullscreen-image" id="fullscreenImage">
+            <div class="fullscreen-content">
+                <div class="fullscreen-header">
+                    <div style="width: 60px;"></div>
+                    <p>👇 이미지를 <strong>길게 누르면</strong> 저장할 수 있어요</p>
+                    <button class="close-btn" onclick="closeFullscreen()">닫기</button>
+                </div>
+                <div class="fullscreen-image-wrapper">
+                    <img id="fullscreenImg" alt="완성된 사진">
                 </div>
             </div>
         </div>
@@ -538,6 +556,7 @@
         let cameraReady = false;
         let isCapturing = false;
         let currentFacingMode = 'user';
+        let finalImageDataUrl = null;
 
         async function requestCameraPermission() {
             try {
@@ -720,7 +739,6 @@
             canvas.width = 600;
             canvas.height = 800;
 
-            // 전면 카메라 좌우 반전
             if (currentFacingMode === 'user') {
                 ctx.save();
                 ctx.translate(canvas.width, 0);
@@ -733,26 +751,16 @@
                 ctx.restore();
             }
 
-            // 픽셀 단위 흑백 변환
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imageData.data;
 
             for (let i = 0; i < data.length; i += 4) {
-                // 흑백 변환
                 const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                
-                // 대비 증가
                 const contrast = 1.3;
                 let adjusted = ((gray - 128) * contrast) + 128;
-                
-                // 밝기 조정
                 adjusted = adjusted * 0.95;
-                
-                // 노이즈
                 const noise = (Math.random() - 0.5) * 15;
                 adjusted += noise;
-                
-                // 범위 제한
                 adjusted = Math.max(0, Math.min(255, adjusted));
                 
                 data[i] = adjusted;
@@ -766,16 +774,11 @@
         }
 
         function showResult() {
-            document.getElementById('mainScreen').classList.remove('active');
-            document.getElementById('resultScreen').classList.add('active');
-            
-            setTimeout(() => {
-                generateFinalImage();
-            }, 100);
+            generateFinalImage();
         }
 
         function generateFinalImage() {
-            const canvas = document.getElementById('resultCanvas');
+            const canvas = document.getElementById('captureCanvas');
             const ctx = canvas.getContext('2d');
 
             const photoWidth = 380;
@@ -808,23 +811,39 @@
                     ctx.shadowColor = 'transparent';
 
                     loadedCount++;
+                    
+                    if (loadedCount === 4) {
+                        // 캔버스를 이미지로 변환
+                        finalImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                        
+                        // 미리보기 이미지 설정
+                        document.getElementById('previewImage').src = finalImageDataUrl;
+                        document.getElementById('fullscreenImg').src = finalImageDataUrl;
+                        
+                        // 결과 화면 표시
+                        document.getElementById('mainScreen').classList.remove('active');
+                        document.getElementById('resultPreview').classList.add('active');
+                    }
                 };
             });
         }
 
-        function showSaveGuide() {
-            document.getElementById('saveGuide').classList.add('active');
+        function openFullscreen() {
+            document.getElementById('fullscreenImage').classList.add('active');
         }
 
-        function closeGuide() {
-            document.getElementById('saveGuide').classList.remove('active');
+        function closeFullscreen() {
+            document.getElementById('fullscreenImage').classList.remove('active');
         }
 
         function resetAll() {
             photos = [];
             isCapturing = false;
+            finalImageDataUrl = null;
+            
+            document.getElementById('resultPreview').classList.remove('active');
+            document.getElementById('fullscreenImage').classList.remove('active');
             document.getElementById('mainScreen').classList.add('active');
-            document.getElementById('resultScreen').classList.remove('active');
             document.getElementById('captureBtn').disabled = false;
             document.getElementById('cameraSwitch').style.display = 'flex';
         }
@@ -833,17 +852,6 @@
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
-        });
-
-        // 롱프레스로 이미지 저장 가능하도록 설정
-        document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('resultCanvas');
-            
-            // 컨텍스트 메뉴 활성화 (길게 눌러서 저장 가능)
-            canvas.addEventListener('contextmenu', (e) => {
-                // 컨텍스트 메뉴 허용
-                return true;
-            });
         });
     </script>
 </body>
