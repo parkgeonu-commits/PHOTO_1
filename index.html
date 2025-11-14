@@ -28,30 +28,34 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 20px;
         }
 
         /* 헤더 */
         .header {
             text-align: center;
-            margin-bottom: 20px;
-            padding-top: max(env(safe-area-inset-top), 20px);
+            padding: 15px 20px;
+            padding-top: max(env(safe-area-inset-top), 15px);
         }
 
         .header h1 {
-            font-size: 32px;
+            font-size: 24px;
             color: #000;
             letter-spacing: 0.1em;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .header p {
             color: #666;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         /* Desktop 스타일 */
         @media (min-width: 768px) {
+            .header {
+                padding: 20px;
+                padding-top: 30px;
+            }
+
             .header h1 {
                 font-size: 70px;
                 margin-bottom: 10px;
@@ -69,44 +73,6 @@
                 margin: 15px auto;
                 max-width: 600px;
             }
-
-            .container {
-                padding: 30px;
-            }
-        }
-
-        /* HTTPS 경고 (모바일만) */
-        .https-warning {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 85%;
-            background-color: #fff3cd;
-            border: 3px solid #ffc107;
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-            display: none;
-            z-index: 2000;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .https-warning.active {
-            display: block;
-        }
-
-        .https-warning h3 {
-            margin-bottom: 12px;
-            font-size: 20px;
-            color: #856404;
-        }
-
-        .https-warning p {
-            margin-bottom: 10px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #856404;
         }
 
         /* 에러 메시지 */
@@ -154,7 +120,7 @@
             width: 100%;
         }
 
-        /* 권한 요청 화면 (모바일만) */
+        /* 권한 요청 화면 */
         .permission-screen {
             position: fixed;
             top: 0;
@@ -208,18 +174,29 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding-bottom: max(env(safe-area-inset-bottom), 20px);
         }
 
         .main-screen.active {
             display: flex;
         }
 
-        /* 카메라 선택 (모바일만) */
+        /* 카메라 영역 */
+        .camera-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* 카메라 선택 */
         .camera-switch {
             display: none;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         @media (max-width: 767px) {
@@ -229,11 +206,11 @@
         }
 
         .camera-switch button {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background-color: #f0f0f0;
             border: 2px solid #ddd;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
         }
 
@@ -243,28 +220,25 @@
             border-color: #000;
         }
 
-        /* 카메라 영역 */
         .video-container {
             position: relative;
-            width: 85vw;
-            max-width: 380px;
+            width: 70vw;
+            max-width: 300px;
             aspect-ratio: 3/4;
             background-color: #000;
-            border: 12px solid #000;
-            border-radius: 20px;
+            border: 10px solid #000;
+            border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 25px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
 
         @media (min-width: 768px) {
             .video-container {
                 width: auto;
-                height: 80vh;
-                max-height: 900px;
+                height: 70vh;
+                max-height: 800px;
                 max-width: none;
                 border: 20px solid #000;
-                margin-bottom: 30px;
             }
         }
 
@@ -272,7 +246,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%) contrast(1.3) brightness(0.95);
+        }
+
+        /* 전면 카메라 좌우 반전 */
+        video.mirrored {
+            transform: scaleX(-1);
         }
 
         .camera-loading {
@@ -296,8 +274,8 @@
         }
 
         .loading-icon {
-            font-size: 50px;
-            margin-bottom: 20px;
+            font-size: 40px;
+            margin-bottom: 15px;
             animation: pulse 2s infinite;
         }
 
@@ -331,7 +309,7 @@
         }
 
         .countdown-number {
-            font-size: 140px;
+            font-size: 100px;
             font-weight: bold;
             color: #fff;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
@@ -350,39 +328,64 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 촬영 버튼 */
-        .capture-btn {
-            width: 85vw;
-            max-width: 380px;
-            padding: 18px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            border-radius: 14px;
-            font-size: 19px;
-            font-weight: 700;
+        /* 촬영 버튼 - 동그라미 */
+        .capture-button-area {
+            padding: 20px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            align-items: center;
+        }
+
+        .capture-btn {
+            width: 70px;
+            height: 70px;
+            background-color: #000;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 0 0 2px #000;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
         }
 
         @media (min-width: 768px) {
             .capture-btn {
-                padding: 22px 60px;
-                font-size: 28px;
-                gap: 15px;
+                width: 90px;
+                height: 90px;
+                border: 6px solid #fff;
             }
         }
 
         .capture-btn:active:not(:disabled) {
-            transform: scale(0.97);
+            transform: scale(0.9);
         }
 
         .capture-btn:disabled {
-            background-color: #ddd;
-            color: #999;
+            background-color: #ccc;
+            opacity: 0.5;
+        }
+
+        .capture-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px;
+            height: 55px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+
+        @media (min-width: 768px) {
+            .capture-btn::after {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        .capture-btn:disabled::after {
+            background-color: #e0e0e0;
         }
 
         /* 결과물 화면 */
@@ -457,7 +460,6 @@
         @media (min-width: 768px) {
             .result-canvas-container {
                 padding: 20px;
-                border-radius: 8px;
                 border: 3px solid #000;
                 margin-bottom: 30px;
                 max-height: 70vh;
@@ -538,7 +540,6 @@
                 font-size: 22px;
                 gap: 10px;
                 border: 3px solid #000;
-                border-radius: 8px;
             }
         }
 
@@ -559,18 +560,6 @@
         .btn-new:active {
             transform: scale(0.97);
         }
-
-        @media (min-width: 768px) {
-            .btn-save:hover {
-                background-color: #333;
-                transform: scale(1.05);
-            }
-
-            .btn-new:hover {
-                background-color: #f0f0f0;
-                transform: scale(1.05);
-            }
-        }
     </style>
 </head>
 <body>
@@ -580,21 +569,12 @@
             <p>레트로 포토 스트립</p>
         </div>
 
-        <!-- HTTPS 경고 (모바일만) -->
-        <div class="https-warning" id="httpsWarning">
-            <h3>⚠️ 보안 연결 필요</h3>
-            <p><strong>모바일에서는 HTTPS가 필요합니다</strong></p>
-            <p>GitHub Pages 등 HTTPS 호스팅 사용 권장</p>
-        </div>
-
-        <!-- 에러 메시지 -->
         <div class="error-box" id="errorBox">
             <h3>⚠️ 카메라 오류</h3>
             <p id="errorMessage"></p>
             <button onclick="retryCamera()">다시 시도</button>
         </div>
 
-        <!-- 권한 요청 화면 (모바일만) -->
         <div class="permission-screen" id="permissionScreen">
             <div class="permission-content">
                 <h2>🎬</h2>
@@ -606,30 +586,30 @@
             </div>
         </div>
 
-        <!-- 메인 화면 -->
         <div class="main-screen" id="mainScreen">
-            <div class="camera-switch" id="cameraSwitch">
-                <button onclick="switchCamera('user')" class="active" id="btnFront">전면</button>
-                <button onclick="switchCamera('environment')" id="btnRear">후면</button>
+            <div class="camera-area">
+                <div class="camera-switch" id="cameraSwitch">
+                    <button onclick="switchCamera('user')" class="active" id="btnFront">전면</button>
+                    <button onclick="switchCamera('environment')" id="btnRear">후면</button>
+                </div>
+
+                <div class="video-container">
+                    <div class="camera-loading" id="cameraLoading">
+                        <div class="loading-icon">🎬</div>
+                        <p style="font-size: 14px;">카메라 연결 중...</p>
+                    </div>
+                    <video id="video" autoplay playsinline muted webkit-playsinline class="mirrored"></video>
+                    <div class="countdown-overlay" id="countdownOverlay">
+                        <div class="countdown-number" id="countdownNumber"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="video-container">
-                <div class="camera-loading" id="cameraLoading">
-                    <div class="loading-icon">🎬</div>
-                    <p>카메라 연결 중...</p>
-                </div>
-                <video id="video" autoplay playsinline muted webkit-playsinline></video>
-                <div class="countdown-overlay" id="countdownOverlay">
-                    <div class="countdown-number" id="countdownNumber"></div>
-                </div>
+            <div class="capture-button-area">
+                <button class="capture-btn" id="captureBtn" onclick="startPhotoSession()" disabled></button>
             </div>
-
-            <button class="capture-btn" id="captureBtn" onclick="startPhotoSession()" disabled>
-                📷 촬영 시작
-            </button>
         </div>
 
-        <!-- 결과물 화면 -->
         <div class="result-screen" id="resultScreen">
             <div class="result-container">
                 <h2>완성된 사진</h2>
@@ -637,7 +617,7 @@
                     <canvas id="resultCanvas"></canvas>
                 </div>
                 <div class="save-info">
-                    <p id="saveInfoText">✓ 사진이 다운로드 폴더에 자동 저장되었습니다</p>
+                    <p id="saveInfoText">✓ 사진이 다운로드되었습니다</p>
                 </div>
                 <div class="result-buttons">
                     <button class="result-btn btn-save" onclick="saveToPhotoLibrary()">
@@ -662,16 +642,12 @@
         let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         let isDesktop = !isMobile;
 
-        // 기기별 초기 설정
         window.addEventListener('load', () => {
             if (isMobile) {
-                // 모바일: 권한 요청 화면 표시
-                checkHTTPS();
                 document.getElementById('permissionScreen').classList.add('active');
                 document.getElementById('saveInfoText').textContent = '📥 아래 버튼으로 사진 저장';
                 document.getElementById('saveBtnText').textContent = '사진 저장하기';
             } else {
-                // 데스크톱: 바로 카메라 시작
                 document.getElementById('mainScreen').classList.add('active');
                 setTimeout(() => {
                     initCamera(currentFacingMode);
@@ -679,25 +655,7 @@
             }
         });
 
-        // HTTPS 체크 (모바일만)
-        function checkHTTPS() {
-            if (!isMobile) return true;
-            
-            const isSecure = window.location.protocol === 'https:' || 
-                           window.location.hostname === 'localhost' || 
-                           window.location.hostname === '127.0.0.1';
-            
-            if (!isSecure) {
-                document.getElementById('httpsWarning').classList.add('active');
-                return false;
-            }
-            return true;
-        }
-
-        // 카메라 권한 요청 (모바일)
         async function requestCameraPermission() {
-            if (!checkHTTPS()) return;
-
             try {
                 const testStream = await navigator.mediaDevices.getUserMedia({ 
                     video: true, 
@@ -716,15 +674,7 @@
             } catch (err) {
                 console.error('권한 오류:', err);
                 document.getElementById('permissionScreen').classList.remove('active');
-                
-                let errorMsg = 'iPhone 설정 → Safari → 카메라 권한을 "허용"으로 변경한 후 페이지를 새로고침하세요.';
-                if (err.name === 'NotFoundError') {
-                    errorMsg = '카메라를 찾을 수 없습니다.';
-                } else if (err.message) {
-                    errorMsg = `오류: ${err.message}`;
-                }
-                
-                showError(errorMsg);
+                showError('카메라 권한을 허용해주세요. iPhone 설정 → Safari → 카메라');
             }
         }
 
@@ -751,6 +701,13 @@
                 stream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = stream;
 
+                // 전면 카메라면 좌우 반전, 후면 카메라면 정상
+                if (facingMode === 'user') {
+                    video.classList.add('mirrored');
+                } else {
+                    video.classList.remove('mirrored');
+                }
+
                 video.onloadedmetadata = async () => {
                     try {
                         await video.play();
@@ -758,28 +715,13 @@
                         cameraReady = true;
                         document.getElementById('captureBtn').disabled = false;
                     } catch (playErr) {
-                        console.error('재생 오류:', playErr);
-                        showError('비디오 재생 실패. 페이지를 새로고침하세요.');
+                        showError('비디오 재생 실패');
                     }
                 };
 
             } catch (err) {
                 console.error('카메라 오류:', err);
-                let errorMsg = '';
-                
-                if (err.name === 'NotAllowedError') {
-                    errorMsg = isMobile 
-                        ? 'iPhone 설정 → Safari → 카메라를 "허용"으로 변경하고 새로고침하세요.'
-                        : '브라우저 설정에서 카메라 권한을 허용해주세요.';
-                } else if (err.name === 'NotFoundError') {
-                    errorMsg = '카메라를 찾을 수 없습니다.';
-                } else if (err.name === 'NotReadableError') {
-                    errorMsg = '카메라가 다른 앱에서 사용 중입니다.';
-                } else {
-                    errorMsg = `카메라 오류: ${err.message}`;
-                }
-                
-                showError(errorMsg);
+                showError('카메라 접근 실패. 권한을 확인해주세요.');
             }
         }
 
@@ -820,7 +762,6 @@
                 document.getElementById('permissionScreen').classList.add('active');
                 document.getElementById('mainScreen').classList.remove('active');
             } else {
-                document.getElementById('cameraLoading').classList.remove('hidden');
                 initCamera(currentFacingMode);
             }
         }
@@ -884,6 +825,8 @@
             if (!video || !cameraReady) return null;
 
             const ctx = canvas.getContext('2d');
+            
+            // 비디오 크롭
             const videoAspect = video.videoWidth / video.videoHeight;
             let sourceWidth = video.videoWidth;
             let sourceHeight = video.videoHeight;
@@ -901,10 +844,21 @@
             canvas.width = 600;
             canvas.height = 800;
 
+            // 전면 카메라는 좌우 반전해서 저장
+            if (currentFacingMode === 'user') {
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+
+            // 흑백 필터 적용
             ctx.filter = 'grayscale(100%) contrast(1.3) brightness(0.95)';
             ctx.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, canvas.width, canvas.height);
             ctx.filter = 'none';
 
+            // 변환 초기화
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            // 노이즈 효과
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 8) {
@@ -936,6 +890,7 @@
             canvas.width = (photoWidth * 2) + spacing + (borderWidth * 2);
             canvas.height = (photoHeight * 2) + spacing + (borderWidth * 2);
 
+            // 화이트 배경
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
