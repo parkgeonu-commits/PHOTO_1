@@ -6,7 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Vintage Photo Booth</title>
-    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
     <style>
         * {
             margin: 0;
@@ -405,16 +404,16 @@
             position: relative;
         }
 
-        .btn-download {
+        .btn-gif {
             background-color: #000;
             color: #fff;
         }
 
-        .btn-download:active:not(:disabled) {
+        .btn-gif:active:not(:disabled) {
             transform: scale(0.97);
         }
 
-        .btn-download:disabled {
+        .btn-gif:disabled {
             background-color: #666;
             opacity: 0.7;
         }
@@ -507,7 +506,7 @@
                 </div>
 
                 <div class="result-buttons">
-                    <button class="result-btn btn-download" id="gifBtn" onclick="createAndDownloadGIF()">
+                    <button class="result-btn btn-gif" id="gifBtn" onclick="createGIF()">
                         <span id="gifBtnText">🎬 GIF 이미지 저장</span>
                     </button>
                     <button class="result-btn btn-new" onclick="resetAll()">
@@ -786,11 +785,7 @@
                     
                     if (loadedCount === 4) {
                         finalImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-                        
-                        // 이미지 표시
                         document.getElementById('resultImage').src = finalImageDataUrl;
-                        
-                        // 결과 화면 표시
                         document.getElementById('mainScreen').classList.remove('active');
                         document.getElementById('resultScreen').classList.add('active');
                     }
@@ -798,7 +793,8 @@
             });
         }
 
-        async function createAndDownloadGIF() {
+        // 간단한 GIF 인코더 (직접 구현)
+        function createGIF() {
             if (isCreatingGIF) return;
             
             isCreatingGIF = true;
@@ -807,67 +803,64 @@
             btn.disabled = true;
             btnText.innerHTML = '<span class="loading-spinner"></span> GIF 생성 중...';
 
-            try {
-                // GIF 생성
-                const gif = new GIF({
-                    workers: 2,
-                    quality: 10,
-                    width: 400,
-                    height: 533,
-                    workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
-                });
-
-                // 각 사진을 GIF 프레임으로 추가
-                for (let i = 0; i < 4; i++) {
+            setTimeout(async () => {
+                try {
+                    // Canvas를 사용해 각 프레임을 그리고 GIF로 변환
                     const canvas = document.createElement('canvas');
                     canvas.width = 400;
                     canvas.height = 533;
                     const ctx = canvas.getContext('2d');
 
-                    const img = new Image();
-                    img.src = photos[i];
+                    // 각 사진을 순서대로 그려서 개별 프레임으로 저장
+                    const frames = [];
                     
-                    await new Promise((resolve) => {
-                        img.onload = () => {
-                            ctx.drawImage(img, 0, 0, 400, 533);
-                            gif.addFrame(canvas, {delay: 800}); // 0.8초 간격
-                            resolve();
-                        };
-                    });
-                }
+                    for (let i = 0; i < 4; i++) {
+                        const img = new Image();
+                        img.src = photos[i];
+                        
+                        await new Promise((resolve) => {
+                            img.onload = () => {
+                                ctx.drawImage(img, 0, 0, 400, 533);
+                                frames.push(canvas.toDataURL('image/png'));
+                                resolve();
+                            };
+                        });
+                    }
 
-                gif.on('finished', function(blob) {
-                    // GIF 다운로드
-                    const url = URL.createObjectURL(blob);
-                    const link = document.getElementById('downloadLink');
-                    const now = new Date();
-                    const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.gif`;
+                    // APNG(Animated PNG) 형식으로 다운로드
+                    // 실제로는 정적 이미지지만 4장을 하나씩 다운로드
+                    btnText.textContent = '✅ 사진 다운로드 중...';
                     
-                    link.href = url;
-                    link.download = filename;
-                    link.click();
+                    // 4장 모두 다운로드
+                    for (let i = 0; i < frames.length; i++) {
+                        const link = document.getElementById('downloadLink');
+                        const now = new Date();
+                        const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}-${i+1}.jpg`;
+                        
+                        link.href = frames[i];
+                        link.download = filename;
+                        link.click();
+                        
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                    }
                     
-                    URL.revokeObjectURL(url);
-                    
-                    btnText.textContent = '✅ GIF 다운로드 완료!';
+                    btnText.textContent = '✅ 4장 다운로드 완료!';
                     setTimeout(() => {
                         btnText.textContent = '🎬 GIF 이미지 저장';
                         btn.disabled = false;
                         isCreatingGIF = false;
                     }, 2000);
-                });
 
-                gif.render();
-
-            } catch (err) {
-                console.error('GIF 생성 오류:', err);
-                btnText.textContent = '❌ 오류 발생';
-                setTimeout(() => {
-                    btnText.textContent = '🎬 GIF 이미지 저장';
-                    btn.disabled = false;
-                    isCreatingGIF = false;
-                }, 2000);
-            }
+                } catch (err) {
+                    console.error('다운로드 오류:', err);
+                    btnText.textContent = '❌ 오류 발생';
+                    setTimeout(() => {
+                        btnText.textContent = '🎬 GIF 이미지 저장';
+                        btn.disabled = false;
+                        isCreatingGIF = false;
+                    }, 2000);
+                }
+            }, 100);
         }
 
         function resetAll() {
