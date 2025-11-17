@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timeless Snap - Vintage Photo Booth</title>
+    <title>Vintage Photo Booth</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Bebas+Neue&display=swap');
-
         * {
             margin: 0;
             padding: 0;
@@ -14,44 +12,14 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #d4a574 0%, #c9a673 50%, #bfa284 100%);
-            color: #3d2f24;
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background-color: #000;
+            color: #fff;
             height: 100vh;
             overflow: hidden;
-            position: relative;
-        }
-
-        /* 빈티지 텍스처 오버레이 */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
-            opacity: 0.4;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* 스크래치 효과 */
-        body::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 30%, transparent 0%, transparent 10px, rgba(255,255,255,0.05) 11px, transparent 12px),
-                radial-gradient(circle at 80% 70%, transparent 0%, transparent 8px, rgba(0,0,0,0.03) 9px, transparent 10px),
-                radial-gradient(circle at 40% 80%, transparent 0%, transparent 6px, rgba(255,255,255,0.04) 7px, transparent 8px);
-            pointer-events: none;
-            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
@@ -59,160 +27,193 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 2;
+            background-color: #000;
         }
 
-        /* 헤더 */
         .header {
             text-align: center;
-            padding: 40px 20px 20px;
-        }
-
-        .camera-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 15px;
-            border: 3px solid #5d4a3a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .camera-icon::before {
-            content: '📷';
-            font-size: 40px;
-            filter: grayscale(100%) sepia(100%) hue-rotate(10deg) saturate(50%);
+            padding: 50px 20px 30px;
+            background-color: #000;
+            border-bottom: 1px solid #333;
         }
 
         .header h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 56px;
+            font-size: 64px;
+            font-weight: 900;
+            color: #fff;
             letter-spacing: 0.15em;
-            color: #3d2f24;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
-        /* 메인 컨테이너 */
-        .main-content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            padding: 20px;
+        .header p {
+            color: #999;
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
         }
 
-        /* 왼쪽 컨트롤 패널 */
-        .control-panel {
-            background: rgba(241, 236, 227, 0.95);
-            padding: 30px 25px;
+        .modal-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 500px;
+            background-color: #1a1a1a;
+            border: 3px solid #fff;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 20px 60px rgba(255,255,255,0.1);
+        }
+
+        .modal-box.active {
+            display: block;
+        }
+
+        .modal-box h3 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #fff;
+        }
+
+        .modal-box p {
+            margin-bottom: 25px;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .modal-box button {
+            padding: 16px 32px;
+            background-color: #fff;
+            color: #000;
+            border: none;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.5);
-            width: 220px;
-            border: 2px solid rgba(93, 74, 58, 0.3);
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
         }
 
-        .shutter-button {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: #a86854;
-            border: 5px solid #8b5442;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3), inset 0 2px 8px rgba(255,255,255,0.2);
-            display: flex;
+        .modal-box button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .permission-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            display: none;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 30px;
+            z-index: 500;
+        }
+
+        .permission-screen.active {
+            display: flex;
+        }
+
+        .permission-content {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .permission-content h2 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .permission-content p {
+            font-size: 20px;
+            line-height: 1.8;
+            color: #999;
+            margin-bottom: 40px;
+        }
+
+        .permission-btn {
+            padding: 20px 50px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .permission-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .main-screen {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .main-screen.active {
+            display: flex;
+        }
+
+        .camera-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .flip-camera-btn {
+            padding: 12px 24px;
+            background-color: #1a1a1a;
+            border: 2px solid #fff;
+            border-radius: 12px;
+            font-size: 28px;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
             color: #fff;
-            letter-spacing: 2px;
         }
 
-        .shutter-button:hover:not(:disabled) {
+        .flip-camera-btn:hover {
+            background-color: #333;
             transform: scale(1.05);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.4), inset 0 2px 8px rgba(255,255,255,0.3);
         }
 
-        .shutter-button:active:not(:disabled) {
+        .flip-camera-btn:active {
             transform: scale(0.95);
         }
 
-        .shutter-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .control-label {
-            font-size: 13px;
-            color: #5d4a3a;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .flip-button {
-            width: 100%;
-            padding: 12px;
-            background: rgba(168, 104, 84, 0.2);
-            border: 2px solid #a86854;
-            border-radius: 8px;
-            font-size: 24px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: all 0.2s;
-        }
-
-        .flip-button:hover {
-            background: rgba(168, 104, 84, 0.3);
-            transform: translateY(-2px);
-        }
-
-        /* 중앙 폴라로이드 프레임 */
-        .polaroid-frame {
-            background: #f9f7f4;
-            padding: 20px 20px 60px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        .video-container {
             position: relative;
-            transform: rotate(-1deg);
-        }
-
-        .polaroid-frame::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 6px);
-            pointer-events: none;
-        }
-
-        .video-wrapper {
-            position: relative;
-            width: 700px;
-            height: 525px;
-            background: #000;
+            width: 600px;
+            height: 800px;
+            background-color: #000;
+            border: 15px solid #fff;
+            border-radius: 20px;
             overflow: hidden;
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.1);
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%) contrast(1.2) brightness(0.95) sepia(20%);
+            -webkit-filter: grayscale(100%) contrast(1.3) brightness(0.95);
+            filter: grayscale(100%) contrast(1.3) brightness(0.95);
         }
 
         video.mirrored {
             transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
         }
 
         .camera-loading {
@@ -225,8 +226,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #2a2520;
-            color: #a89984;
+            background-color: #000;
+            color: #666;
             z-index: 10;
         }
 
@@ -234,9 +235,19 @@
             display: none;
         }
 
-        .loading-text {
-            font-size: 16px;
-            margin-top: 15px;
+        .loading-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .loading-icon::before {
+            content: '🎬';
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .countdown-overlay {
@@ -245,10 +256,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
             display: none;
             align-items: center;
             justify-content: center;
+            background-color: rgba(0, 0, 0, 0.85);
             z-index: 20;
         }
 
@@ -257,300 +268,223 @@
         }
 
         .countdown-number {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 180px;
-            color: #f9f7f4;
-            text-shadow: 0 0 50px rgba(249, 247, 244, 0.5);
+            font-size: 150px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
             animation: countPulse 1s;
         }
 
         @keyframes countPulse {
-            0% { transform: scale(0.5); opacity: 0; }
+            0% { transform: scale(0.8); opacity: 0; }
             50% { transform: scale(1.2); }
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 4컷 미리보기 */
-        .thumbnail-strip {
-            display: flex;
-            gap: 12px;
-            margin-top: 15px;
-            justify-content: center;
+        .capture-button-area {
+            margin-top: 30px;
         }
 
-        .thumbnail {
-            width: 150px;
-            height: 112px;
-            background: #2a2520;
-            border: 3px solid #f9f7f4;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%) contrast(1.2) sepia(20%);
-        }
-
-        /* 오른쪽 정보 패널 */
-        .info-panel {
-            background: rgba(241, 236, 227, 0.95);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.5);
-            width: 200px;
-            border: 2px solid rgba(93, 74, 58, 0.3);
-            text-align: center;
-        }
-
-        .info-title {
-            font-size: 13px;
-            color: #5d4a3a;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .photo-count {
-            width: 50px;
-            height: 50px;
-            background: #a86854;
+        .capture-btn {
+            width: 90px;
+            height: 90px;
+            background-color: #fff;
+            border: 6px solid #000;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .action-buttons {
-            margin-top: 20px;
-        }
-
-        .action-btn {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #a86854;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(255,255,255,0.2), inset 0 0 0 3px #fff;
             cursor: pointer;
             transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            position: relative;
         }
 
-        .action-btn:hover {
-            background: #8b5442;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .capture-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.3);
+        }
+
+        .capture-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .capture-btn:disabled {
+            background-color: #333;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .capture-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background-color: #000;
+            border-radius: 50%;
+        }
+
+        .capture-btn:disabled::after {
+            background-color: #666;
         }
 
         /* 결과 화면 */
         .result-screen {
             display: none;
+            width: 100vw;
+            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #d4a574 0%, #c9a673 50%, #bfa284 100%);
-            z-index: 100;
+            background-color: #000;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
         .result-screen.active {
             display: flex;
         }
 
-        .result-polaroid {
-            background: #f9f7f4;
-            padding: 25px 25px 80px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
-            transform: rotate(-0.5deg);
+        .result-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background-color: #000;
+            border-bottom: 2px solid #333;
         }
 
-        .result-image {
-            max-width: 800px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        .result-header h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
         }
 
-        .result-buttons {
+        .result-image-wrapper {
+            flex: 1;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background-color: #000;
+        }
+
+        .result-image-wrapper img {
+            max-width: 700px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(255,255,255,0.15);
+        }
+
+        .result-actions {
+            padding: 30px 40px;
+            background-color: #000;
+            border-top: 2px solid #333;
+            display: flex;
+            justify-content: center;
             gap: 20px;
-            margin-top: 40px;
         }
 
         .result-btn {
-            padding: 16px 40px;
-            background: #a86854;
-            color: #fff;
-            border: 3px solid #8b5442;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .result-btn:hover {
-            background: #8b5442;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.4);
-        }
-
-        /* 푸터 */
-        .footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 12px;
-            color: #5d4a3a;
-            opacity: 0.7;
-        }
-
-        .permission-screen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #d4a574 0%, #c9a673 50%, #bfa284 100%);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .permission-screen.active {
-            display: flex;
-        }
-
-        .permission-content {
-            text-align: center;
-            background: rgba(249, 247, 244, 0.95);
-            padding: 50px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .permission-content h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 48px;
-            color: #3d2f24;
-            margin-bottom: 20px;
-            letter-spacing: 3px;
-        }
-
-        .permission-content p {
-            font-size: 18px;
-            color: #5d4a3a;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .permission-btn {
-            padding: 18px 50px;
-            background: #a86854;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
+            padding: 18px 40px;
+            border: 3px solid #fff;
+            border-radius: 14px;
             font-size: 20px;
             font-weight: 700;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .permission-btn:hover {
-            background: #8b5442;
+        .result-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+        }
+
+        .result-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-share {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .btn-share:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-new {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .btn-new:hover {
+            background-color: #1a1a1a;
         }
     </style>
 </head>
 <body>
-    <div class="permission-screen active" id="permissionScreen">
-        <div class="permission-content">
-            <div class="camera-icon"></div>
-            <h2>CAMERA ACCESS</h2>
-            <p>빈티지 포토부스를 시작하려면<br>카메라 권한이 필요합니다</p>
-            <button class="permission-btn" onclick="requestCameraPermission()">시작하기</button>
-        </div>
-    </div>
-
-    <div class="container" id="mainContainer" style="display: none;">
+    <div class="container">
         <div class="header">
-            <div class="camera-icon"></div>
-            <h1>TIMELESS SNAP</h1>
+            <h1>VINTAGE BOOTH</h1>
+            <p>레트로 포토 스트립</p>
         </div>
 
-        <div class="main-content">
-            <!-- 왼쪽 컨트롤 -->
-            <div class="control-panel">
-                <button class="shutter-button" id="shutterBtn" onclick="startPhotoSession()" disabled>
-                    SHUTTER
-                </button>
-                
-                <div class="control-label">Camera Flip</div>
-                <button class="flip-button" onclick="flipCamera()">🔄</button>
-            </div>
+        <div class="modal-box" id="errorBox">
+            <h3>⚠️ 카메라 오류</h3>
+            <p id="errorMessage"></p>
+            <button onclick="retryCamera()">다시 시도</button>
+        </div>
 
-            <!-- 중앙 카메라 -->
-            <div class="polaroid-frame">
-                <div class="video-wrapper">
+        <div class="permission-screen active" id="permissionScreen">
+            <div class="permission-content">
+                <h2>카메라 권한 필요</h2>
+                <p>빈티지 포토부스를 사용하려면<br>카메라 접근 권한이 필요합니다</p>
+                <button class="permission-btn" onclick="requestCameraPermission()">
+                    카메라 시작하기
+                </button>
+            </div>
+        </div>
+
+        <div class="main-screen" id="mainScreen">
+            <div class="camera-area">
+                <button class="flip-camera-btn" id="flipBtn" onclick="flipCamera()">🔄</button>
+
+                <div class="video-container">
                     <div class="camera-loading" id="cameraLoading">
-                        <div style="font-size: 48px;">📷</div>
-                        <div class="loading-text">카메라 연결 중...</div>
+                        <div class="loading-icon"></div>
+                        <p style="font-size: 18px;">카메라 연결 중...</p>
                     </div>
                     <video id="video" autoplay playsinline muted class="mirrored"></video>
                     <div class="countdown-overlay" id="countdownOverlay">
                         <div class="countdown-number" id="countdownNumber"></div>
                     </div>
                 </div>
-                
-                <div class="thumbnail-strip" id="thumbnailStrip">
-                    <div class="thumbnail"></div>
-                    <div class="thumbnail"></div>
-                    <div class="thumbnail"></div>
-                    <div class="thumbnail"></div>
-                </div>
-            </div>
 
-            <!-- 오른쪽 정보 -->
-            <div class="info-panel">
-                <div class="info-title">Photos Taken</div>
-                <div class="photo-count" id="photoCount">0/4</div>
-                <div style="font-size: 12px; color: #8b7355; line-height: 1.5;">
-                    빈티지 빛이 당신의<br>순간을 담습니다
+                <div class="capture-button-area">
+                    <button class="capture-btn" id="captureBtn" onclick="startPhotoSession()" disabled></button>
                 </div>
             </div>
         </div>
 
-        <div class="footer">
-            Powered by VINTAGE LENS
-        </div>
-    </div>
+        <!-- 결과 화면 -->
+        <div class="result-screen" id="resultScreen">
+            <div class="result-header">
+                <h2>완성된 사진</h2>
+            </div>
 
-    <!-- 결과 화면 -->
-    <div class="result-screen" id="resultScreen">
-        <div class="result-polaroid">
-            <img id="resultImage" class="result-image" alt="Vintage Photo">
-        </div>
-        <div class="result-buttons">
-            <button class="result-btn" onclick="shareImage()">📤 AIRDROP</button>
-            <button class="result-btn" onclick="resetAll()">↻ RETAKE</button>
+            <div class="result-image-wrapper">
+                <img id="resultImage" alt="빈티지 포토">
+            </div>
+
+            <div class="result-actions">
+                <button class="result-btn btn-share" onclick="shareImage()">
+                    📤 AirDrop으로 공유
+                </button>
+                <button class="result-btn btn-new" onclick="resetAll()">
+                    ↻ 다시 촬영
+                </button>
+            </div>
         </div>
     </div>
 
@@ -563,8 +497,8 @@
         let cameraReady = false;
         let isCapturing = false;
         let currentFacingMode = 'user';
-        let finalBlob = null;
         let finalImageDataUrl = null;
+        let finalBlob = null;
 
         async function requestCameraPermission() {
             try {
@@ -576,20 +510,22 @@
                 testStream.getTracks().forEach(track => track.stop());
                 
                 document.getElementById('permissionScreen').classList.remove('active');
-                document.getElementById('mainContainer').style.display = 'flex';
+                document.getElementById('mainScreen').classList.add('active');
                 
                 setTimeout(() => {
                     initCamera(currentFacingMode);
                 }, 100);
                 
             } catch (err) {
-                console.error('카메라 권한 오류:', err);
-                alert('카메라 권한을 허용해주세요.');
+                console.error('권한 오류:', err);
+                document.getElementById('permissionScreen').classList.remove('active');
+                showError('카메라 권한을 허용해주세요.\n시스템 환경설정 → 보안 및 개인정보보호 → 카메라');
             }
         }
 
         async function initCamera(facingMode = 'user') {
             try {
+                hideError();
                 const video = document.getElementById('video');
                 const loading = document.getElementById('cameraLoading');
                 loading.classList.remove('hidden');
@@ -621,32 +557,51 @@
                         await video.play();
                         loading.classList.add('hidden');
                         cameraReady = true;
-                        document.getElementById('shutterBtn').disabled = false;
-                    } catch (err) {
-                        alert('비디오 재생 실패');
+                        document.getElementById('captureBtn').disabled = false;
+                    } catch (playErr) {
+                        showError('비디오 재생 실패');
                     }
                 };
 
             } catch (err) {
                 console.error('카메라 오류:', err);
-                alert('카메라에 접근할 수 없습니다.');
+                showError('카메라 접근 실패.\n권한을 확인해주세요.');
             }
         }
 
         function flipCamera() {
             if (!cameraReady || isCapturing) return;
+            
             currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
             cameraReady = false;
-            document.getElementById('shutterBtn').disabled = true;
+            document.getElementById('captureBtn').disabled = true;
             initCamera(currentFacingMode);
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorBox').classList.add('active');
+            document.getElementById('cameraLoading').classList.add('hidden');
+            cameraReady = false;
+            document.getElementById('captureBtn').disabled = true;
+        }
+
+        function hideError() {
+            document.getElementById('errorBox').classList.remove('active');
+        }
+
+        function retryCamera() {
+            hideError();
+            document.getElementById('permissionScreen').classList.add('active');
+            document.getElementById('mainScreen').classList.remove('active');
         }
 
         function startPhotoSession() {
             if (!cameraReady || isCapturing) return;
             photos = [];
             isCapturing = true;
-            document.getElementById('shutterBtn').disabled = true;
-            updatePhotoCount(0);
+            document.getElementById('captureBtn').disabled = true;
+            document.getElementById('flipBtn').disabled = true;
             takePhotosSequence(0);
         }
 
@@ -654,7 +609,7 @@
             if (index >= 4) {
                 isCapturing = false;
                 setTimeout(() => {
-                    generateFinalImage();
+                    showResult();
                 }, 500);
                 return;
             }
@@ -670,8 +625,6 @@
                         const photo = capturePhoto();
                         if (photo) {
                             photos.push(photo);
-                            updateThumbnail(index, photo);
-                            updatePhotoCount(index + 1);
                         }
                         hideCountdown();
                         setTimeout(() => {
@@ -692,20 +645,6 @@
 
         function hideCountdown() {
             document.getElementById('countdownOverlay').classList.remove('active');
-        }
-
-        function updatePhotoCount(count) {
-            document.getElementById('photoCount').textContent = count + '/4';
-        }
-
-        function updateThumbnail(index, photoData) {
-            const thumbnails = document.querySelectorAll('.thumbnail');
-            if (thumbnails[index]) {
-                const img = document.createElement('img');
-                img.src = photoData;
-                thumbnails[index].innerHTML = '';
-                thumbnails[index].appendChild(img);
-            }
         }
 
         function capturePhoto() {
@@ -749,25 +688,25 @@
 
             for (let i = 0; i < data.length; i += 4) {
                 const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-                const contrast = 1.2;
+                const contrast = 1.3;
                 let adjusted = ((gray - 128) * contrast) + 128;
                 adjusted = adjusted * 0.95;
+                const noise = (Math.random() - 0.5) * 15;
+                adjusted += noise;
+                adjusted = Math.max(0, Math.min(255, adjusted));
                 
-                // 세피아 톤
-                const sepiaR = adjusted * 1.07;
-                const sepiaG = adjusted * 0.95;
-                const sepiaB = adjusted * 0.82;
-                
-                const noise = (Math.random() - 0.5) * 12;
-                
-                data[i] = Math.max(0, Math.min(255, sepiaR + noise));
-                data[i + 1] = Math.max(0, Math.min(255, sepiaG + noise));
-                data[i + 2] = Math.max(0, Math.min(255, sepiaB + noise));
+                data[i] = adjusted;
+                data[i + 1] = adjusted;
+                data[i + 2] = adjusted;
             }
 
             ctx.putImageData(imageData, 0, 0);
 
             return canvas.toDataURL('image/jpeg', 0.92);
+        }
+
+        function showResult() {
+            generateFinalImage();
         }
 
         function generateFinalImage() {
@@ -782,7 +721,7 @@
             canvas.width = (photoWidth * 2) + spacing + (borderWidth * 2);
             canvas.height = (photoHeight * 2) + spacing + (borderWidth * 2);
 
-            ctx.fillStyle = '#f9f7f4';
+            ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             let loadedCount = 0;
@@ -796,9 +735,9 @@
                     const y = borderWidth + (row * (photoHeight + spacing));
 
                     ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-                    ctx.shadowBlur = 8;
-                    ctx.shadowOffsetX = 3;
-                    ctx.shadowOffsetY = 3;
+                    ctx.shadowBlur = 6;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
 
                     ctx.drawImage(img, x, y, photoWidth, photoHeight);
                     ctx.shadowColor = 'transparent';
@@ -815,7 +754,7 @@
                             // 자동 다운로드
                             const link = document.getElementById('downloadLink');
                             const now = new Date();
-                            const filename = `timeless-snap-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.jpg`;
+                            const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.jpg`;
                             
                             link.href = finalImageDataUrl;
                             link.download = filename;
@@ -834,25 +773,25 @@
             try {
                 if (navigator.share) {
                     const now = new Date();
-                    const filename = `timeless-snap-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.jpg`;
+                    const filename = `vintage-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.jpg`;
                     
                     const file = new File([finalBlob], filename, { type: 'image/jpeg' });
                     
                     await navigator.share({
                         files: [file],
-                        title: 'Timeless Snap',
-                        text: '빈티지 포토부스'
+                        title: 'Vintage Photo',
+                        text: '빈티지 포토부스에서 촬영한 사진입니다'
                     });
                 } else {
                     const link = document.getElementById('downloadLink');
                     link.click();
-                    alert('파일이 다운로드 되었습니다!');
+                    alert('파일이 다운로드 되었습니다!\nFinder에서 파일을 찾아 AirDrop으로 공유하세요.');
                 }
             } catch (err) {
                 console.error('공유 오류:', err);
                 const link = document.getElementById('downloadLink');
                 link.click();
-                alert('파일이 다운로드 되었습니다!');
+                alert('파일이 다운로드 되었습니다!\nFinder에서 파일을 찾아 AirDrop으로 공유하세요.');
             }
         }
 
@@ -866,15 +805,10 @@
             }
             finalBlob = null;
             
-            // 썸네일 초기화
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.innerHTML = '';
-            });
-            
-            updatePhotoCount(0);
-            
             document.getElementById('resultScreen').classList.remove('active');
-            document.getElementById('shutterBtn').disabled = false;
+            document.getElementById('mainScreen').classList.add('active');
+            document.getElementById('captureBtn').disabled = false;
+            document.getElementById('flipBtn').disabled = false;
         }
 
         window.addEventListener('beforeunload', () => {
